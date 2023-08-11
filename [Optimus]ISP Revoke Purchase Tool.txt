@@ -1,0 +1,58 @@
+// ==UserScript==
+// @name           [Optimus]ISP Revoke Purchase Tool
+// @version        2.0
+// @description    Create button to SSH into ISP host
+// @updateURL      https://drive-render.corp.amazon.com/view/Alexa%20Cetification%20Docs/Automation%20Script%20Library/ISPRevokePurchaseTool.js
+// @match          https://optimus-prod.aka.amazon.com/skill/*/version/*/isp?*
+// @run-at         document-idle
+// @author         janaravi,nayankjh
+// ==/UserScript==
+
+(function() {
+    setTimeout(function(){
+   var par = document.querySelector("#app > section > main > div > div > div > div.ant-row.m-l-lg.m-r-lg.skillDetailArea > div.ant-col.ant-col-18.skillInformationArea.p-r-lg > div > div.ant-tabs-content.ant-tabs-content-animated.ant-tabs-top-content > div.ant-tabs-tabpane.ant-tabs-tabpane-active > div.ispLayout > section > main > div > div:nth-child(1) > div");
+   // var par2 = document.querySelector("#app > section > main > div > div > div > div.ant-row.m-l-lg.m-r-lg.skillDetailArea > div.ant-col.ant-col-18.skillInformationArea.p-r-lg > div > div.ant-tabs-content.ant-tabs-content-animated.ant-tabs-top-content > div.ant-tabs-tabpane.ant-tabs-tabpane-active > div.ispLayout > section > main > div > div:nth-child(1)");
+    var positionDivNode = document.createElement('DIV');
+    var fdivNode = document.createElement("DIV");
+    var ftitleNode = document.createElement("DIV");
+    var ftextNode = document.createTextNode("ISP Revoke Purchases Tool");
+    var helpLinkNode = document.createElement('A');
+    var helpIconNode = document.createElement('IMG');
+    var bdivNode = document.createElement("DIV");
+
+    positionDivNode.style = "position: fixed; width: 100%; max-width: 1180px; height: 0px; margin: 0px auto; top: 10%; left: 40%; transform: translateX(-50%); border: 0px solid red;";
+    fdivNode.id = "DivFooter";
+    fdivNode.style = "position: absolute; right: 10px; width: 15%; max-width: 250px; min-width: 100px; min-height: 50px; background-color: #1e3d7b; text-align: center; font-variant: small-caps; padding: 5px; box-shadow: 2px 2px 5px black;";
+    ftitleNode.style = "padding: 5px; margin-bottom: 5px; background-color: #2851a4; text-align: center; color: #d6e2f5;";
+    helpLinkNode.id = 'mgdCertScriptHelp';
+    helpLinkNode.title = 'Open SOP to learn more'
+    helpLinkNode.href = 'https://wiki.labcollab.net/confluence/display/Doppler/ISP+Revoke+Purchases+Tool+SOP';
+    helpLinkNode.target = '_blank';
+    helpLinkNode.style.marginLeft = '5px';
+    helpIconNode.src = 'https://wiki.labcollab.net/confluence/s/en_GB/7402/131c587a84e4ee088cb3d1cec7ecd765481c9c79/6.4.3/_/images/icons/emoticons/help_16.png';
+    helpIconNode.style.width = '12px';
+    bdivNode.id = "ISPRevokePurchaseButton";
+    fdivNode.appendChild(ftitleNode);
+    ftitleNode.appendChild(ftextNode);
+    helpLinkNode.appendChild(helpIconNode);
+    ftitleNode.appendChild(helpLinkNode);
+    fdivNode.appendChild(bdivNode);
+    positionDivNode.appendChild(fdivNode);
+    par.appendChild(positionDivNode);
+    function getISPRevokeURL() {
+        var url = "https://ssh.corp.amazon.com/?tabs=isp-revokepurchases-1a-35eed96d.us-east-1.amazon.com";
+        return "window.open('" + url + "')"
+    };
+	var ISPRevokeBtn = document.createElement("BUTTON");
+	var ISPRevokeTxt = document.createTextNode("Click here to revoke");
+	var ISPRevokeURL = getISPRevokeURL();
+	ISPRevokeBtn.id = "ISPRevokePurchasesBtn";
+    ISPRevokeBtn.className = "button";
+	ISPRevokeBtn.appendChild(ISPRevokeTxt);
+	ISPRevokeBtn.setAttribute("onclick", ISPRevokeURL);
+	ISPRevokeBtn.style.margin = "3px";
+    ISPRevokeBtn.title = 'Clicking here will redirect to the ssh terminal. Please keep your customer ID and product ID handy';
+    document.getElementById("ISPRevokePurchaseButton").appendChild(ISPRevokeBtn);
+    document.getElementById("ISPRevokePurchaseButton").appendChild(document.createElement('DIV'));
+                          }, 6000);
+ })();

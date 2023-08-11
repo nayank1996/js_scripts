@@ -1,0 +1,117 @@
+// ==UserScript==
+// @name         [OPTIMUS] Consolidated TCO
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Saving time Lots of time!!!!
+// @author       nayankjh@
+// @match        https://optimus-prod.aka.amazon.com/activityList/skill/*
+// @match        https://optimus-prod.aka.amazon.com/*
+// @match        https://issues.amazon.com/issues/*
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
+// @grant       GM_setClipboard
+// @grant       GM_setValue
+// @grant       GM_getValue
+// @grant       GM_listValues
+// @grant       GM_deleteValue
+// ==/UserScript==
+var $ = window.jQuery;
+(function() {
+    'use strict';
+    if(window.location.href == "https://issues.amazon.com/issues/create?template=99ebca04-1d63-4c5a-be8a-464871985814"){
+            window.alert("POC :---\nFor Skill targeted to US and CA –SEA Team \n For Skill targeted toUK –Thierry Calonnec(calonnec@) \n For Skill targeted to AU –AU Team");
+            }
+
+    setTimeout(function(){
+        var top =$("#app > section > main > div > div.skillList.p-md.p-r-lg > div > div:nth-child(1) > div > div.ant-col.ant-col-16 > h2 > span");
+        var bottom =$("#app > section > main > div > div > div > div.workSpaceArea > h4")
+        var childElement = document.createElement('input');
+    childElement.id ="tcoButton";
+    childElement.setAttribute("style", "font-size:10px; border-radius: 8px; margin-left:5px ; padding:2px 3px; background-color:white");
+    childElement.className="button danger test_activity_escalate";
+    childElement.type="button";
+    childElement.value="Go";
+    var select = document.createElement('select');
+    select.id="tcoSelect";
+    var option;
+    var inputdata = "<---TCO--->||Home page||Custom||Smart Home||Audio||SLU||Security||APL||ISP||DIEsame SOP||Restart SOP||Region Specific TT||Recognition issue TT||----Quicklinks----||SME Tracker||Restart Quip||PCON||Deeops Utterances||NLU||Virustotal||Blurb repository||Golden Utterance||Smart Home Endpoint||Example phrase Format||Pulse";
+
+    inputdata.split( '||' ).forEach(function(item) {
+
+        option = document.createElement('option');
+
+        option.value = option.textContent = item;
+
+        select.appendChild(option);
+});
+    select.setAttribute("style", "margin-left: 10px ; font-size: 14px ; color: black");
+
+     bottom.append(select);
+        bottom.append(childElement);
+        top.append(select);
+        top.append(childElement);
+
+        $("#tcoButton").click(function() {
+
+        var selectMain= document.getElementById("tcoSelect");
+        var tco="";
+        tco=selectMain.value;
+
+        switch(tco)
+        {
+             case 'Home page': window.open('https://wiki.labcollab.net/confluence/display/COPS/Alexa+Certification+reference+documents');
+                break;
+                case 'Custom': window.open('https://wiki.labcollab.net/confluence/display/COPS/Functional+Activity+-+Custom+API+-+Tester+Reference+Document');
+                break;
+                case 'Smart Home': window.open('https://wiki.labcollab.net/confluence/display/COPS/Functional+Activity+-+Smart+Home+API+-+Tester+Reference+Document');
+                break;
+                case 'Audio' : window.open('https://wiki.labcollab.net/confluence/display/COPS/Functional+Activity+-+Audio+-+Tester+Reference+Document');
+                break;
+                case 'Golden Utterance': window.open('https://wiki.labcollab.net/confluence/display/COPS/Top+Level+Domain+Golden+Utterances#TopLevelDomainGoldenUtterances-UsingtheGoldenUtterances');
+                break;
+                case 'Smart Home Endpoint': window.open('https://askconsole-iad.iad.proxy.amazon.com/get_skilldetails_by_skillid/');
+                break;
+                case 'Example phrase Format': window.open('https://developer.amazon.com/docs/custom-skills/understanding-how-users-invoke-custom-skills.html');
+                break;
+                case 'Pulse': window.open('https://squawk.amazon.com/');
+                break;
+                case 'SLU': window.open('https://wiki.labcollab.net/confluence/display/COPS/SLU+Activity+-+Tester+Reference+Document');
+                break;
+                case 'Security': window.open('https://wiki.labcollab.net/confluence/display/COPS/Security+Activity+-+Tester+Reference+Document');
+                break;
+                case 'NLU': window.open('https://nluconsole.aka.amazon.com/ui/interact?locale=en-US&marketplace=USAmazon&service=BluService&stage=Prod');
+                break;
+                case 'Dev Blurbs': window.open('https://wiki.labcollab.net/confluence/display/COPS/Alexa+Certification+Dev+Blurb');
+                break;
+                case 'Virustotal': window.open('https://www.virustotal.com/gui/home/url');
+                break;
+                case 'ISP': window.open('https://wiki.labcollab.net/confluence/display/COPS/Functional+Activity+-+ISP-+Tester+Reference+Document');
+                break;
+                case 'Deeops Utterances': window.open('https://dodb-iad.iad.proxy.amazon.com/utterances');
+                break;
+               case 'Blurb repository': window.open('https://wiki.labcollab.net/confluence/pages/viewpage.action?pageId=1398441984');
+                break;
+                case 'DIEsame SOP' : window.open('https://wiki.labcollab.net/confluence/display/COPS/%5BNew+Process%5D+Simplified+testing+for+Multi-Locale+Skills+Functional+%23DIEsame++and+Security+Activity');
+                 break;
+            case 'Restart SOP' : window.open('https://wiki.labcollab.net/confluence/display/COPS/Restart+SOP+for+Functional');
+                break;
+            case 'PCON': window.open('https://pcon.alexa.amazon.dev/');
+            break;
+            case 'CD SOP': window.open('https://wiki.labcollab.net/confluence/display/COPS/CD+Skills+Checklist');
+              break;
+            case 'Restart Quip': window.open('https://quip-amazon.com/B7X9Asw8bUn9/Restart-Details-2021#EcI9CAwtQ9O');
+            break;
+            case 'Region Specific TT': window.open('https://issues.amazon.com/issues/create?template=99ebca04-1d63-4c5a-be8a-464871985814').window.confirm("POC :---For Skill targeted to US and CA –SEA Team ||||| For Skill targeted toUK –Thierry Calonnec(calonnec@) |||| For Skill targeted to AU –AU Team");
+            break;
+            case 'Recognition issue TT': window.open('https://issues.amazon.com/issues/create?template=4234a9f9-7152-48b9-9a26-33b7268ee533');
+            break;
+            case 'SME Tracker': window.open('https://w.amazon.com/bin/view/SMEQueryTracker');
+            break;
+            case 'APL': window.open('https://wiki.labcollab.net/confluence/pages/viewpage.action?pageId=507750727');
+            break;
+            default: console.log('default');
+        }
+
+
+    });
+    },5000)
+})();

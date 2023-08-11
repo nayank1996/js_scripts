@@ -1,0 +1,69 @@
+// ==UserScript==
+// @name         [Optimus]TnM Automater
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Automatically copies the required information from optimus on one click
+// @author       nayankjh@
+// @match        https://optimus-prod.aka.amazon.com/skill/*
+// @require      https://code.jquery.com/jquery-1.11.1.min.js
+// @grant        GM_xmlhttpRequest
+// ==/UserScript==
+
+(function() {
+    'use strict';
+      setTimeout(function(){
+            addButton('Copy Skill details', buttonClick);
+       },5000);
+function buttonClick() {
+    let val =0;
+ let url = window.location.href.split('/');
+  let acceptedBadges = ['CUSTOM','ISP', 'DISPLAY', 'APL', 'MUSIC', 'VIDEO', 'AMAZON_PAY','CCP','REMINDERS', 'SMART_HOME', 'CONTENT','GEOLOCATION']
+    let skillName =document.querySelector("#app > section > main > div > div > div > div.skillInfo > div > div.ant-col.ant-col-22 > div:nth-child(1) > div.ant-col.ant-col-16 > div:nth-child(1) > span").innerText;
+        let testerId = document.querySelector("#app > section > header > div > div.ant-col.ant-col-2.optimus-text-right > span").innerText;
+        let skillId = url[4];
+        let versionId = url[6]
+        let optimus = "https://optimus-prod.aka.amazon.com/skill/" + skillId + "/version/" + versionId + "/about?";
+        let badges = document.querySelector("#app > section > main > div > div > div > div.skillInfo > div > div.ant-col.ant-col-22 > div.m-t-sm > div:nth-child(2)").getElementsByTagName('div')
+        let badge1 = [];
+        let badge2 = [];
+        for(var i=0; i<badges.length;i++){
+            badge1.push(badges[i].innerHTML)
+        }
+        for(var j=0; j<badge1.length;j++){
+        if(acceptedBadges.includes(badge1[j])){
+        badge2.push(badge1[j])
+        }
+        }
+    fetch('https://alexaskillcontent-ca-iad.iad.proxy.amazon.com/api/cops-manifests/certification/'+skillId+'/'+versionId+'?withCopsDerivedData=true')
+        .then(response => response.json())
+        .then(function(data) {
+        // console.log('gvt - vendorId', data.skillManifest.vendorId)
+        return data.enrichment.locales
+    })
+    .then(locales => {
+
+    for(let z=0;z<locales.length;z++){
+    if(locales[z].split('-')[0]== 'en' ){
+         val++;
+         }
+    }
+ var temp = document.createElement("textarea");
+                document.body.appendChild(temp);
+                    temp.value = `${testerId}\t${skillName}\t${skillId}|${versionId}\t${optimus}\t${badge2}\t${val}` ;
+                    temp.select();
+                    document.execCommand('copy');
+                    temp.remove();
+    })
+}
+
+    function addButton(text, onclick) {
+        let cssObj = {position: 'absolute', top: '45%', right:'35.65%', 'z-index': 3};
+        let childElement = document.createElement('button'), btnStyle = childElement.style
+        childElement.id ="ttButton";
+        childElement.setAttribute("style", "font-size:15px; border-radius: 10px; position: absolute; right: 30%; background-color:yellow;cursor:pointer");
+        childElement.innerText=text;
+        document.body.appendChild(childElement);
+        childElement.onclick = onclick;
+        Object.keys(cssObj).forEach(key => {btnStyle[key] = cssObj[key]});
+    };
+})();

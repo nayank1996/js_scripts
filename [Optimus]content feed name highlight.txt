@@ -1,0 +1,32 @@
+// ==UserScript==
+// @name         [Optimus]Content Skill Feed Name
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  Content Skill Feed Name Failure
+// @author       Kunal Majumder , nayankjh@
+// @match        https://optimus-prod.aka.amazon.com/skill/*/version/*/feeds?*
+// @require      https://ajax.googleapis.com/ajax/libs/jquery/3.2.1/jquery.min.js
+// @grant        none
+// ==/UserScript==
+(function() {
+    'use strict';
+    setTimeout(function(){
+    var elem_invocation = document.querySelector("#app > section > main > div > div > div > div.ant-row.m-l-lg.m-r-lg.skillDetailArea > div.ant-col.ant-col-18.skillInformationArea.p-r-lg > div > div.ant-tabs-content.ant-tabs-content-animated.ant-tabs-top-content > div.ant-tabs-tabpane.ant-tabs-tabpane-active > div.feedsLayout > section > main > div > span.m-l-md.skillDetailsHeader.optimus-text-large.feedHeader");
+    var textInvo = elem_invocation.textContent;
+    var example = textInvo.trim();
+    var myArray = [/feed\s*name/i, /Developer\s*news/i, /Default/i];
+    var result = null;
+    var reg = null;
+    var targNode = document.querySelector("#app > section > main > div > div > div > div.ant-row.m-l-lg.m-r-lg.skillDetailArea > div.ant-col.ant-col-18.skillInformationArea.p-r-lg > div > div.ant-tabs-content.ant-tabs-content-animated.ant-tabs-top-content > div.ant-tabs-tabpane.ant-tabs-tabpane-active > div.feedsLayout > section > main > div > span.m-l-md.skillDetailsHeader.optimus-text-large.feedHeader");
+   //var targNode= document.querySelector("#app > section > main > div > div > div > div.ant-row.m-l-lg.m-r-lg.skillDetailArea > div.ant-col.ant-col-18.skillInformationArea.p-r-lg > div > div.ant-tabs-content.ant-tabs-content-animated.ant-tabs-top-content > div.ant-tabs-tabpane.ant-tabs-tabpane-active > div.feedsLayout > section > main > div");
+        for (var i = 0 ; i < myArray.length ; i++) {
+			result = example.match(myArray[i]);
+			if(result === null){
+				targNode.style.background = "green";
+			}else{
+				targNode.style.background = "red";
+				break;
+			}
+    };
+}, 6000);
+})();

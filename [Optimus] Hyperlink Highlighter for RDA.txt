@@ -1,0 +1,49 @@
+// ==UserScript==
+// @name         [Optimus] Hyperlink Highlighter for RDA
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  This highlights all the hyperlinks in RDA page and onclick will open in different page.
+// @author       nayankjh@
+// @match        https://optimus-prod.aka.amazon.com/activityDetail/certMngr/*
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
+// @grant        none
+// ==/UserScript==
+
+(function() {
+    var $ = window.jQuery;
+    'use strict';
+    setTimeout(function(){
+     var title = document.querySelector("#app > section > main > div > div > div > div:nth-child(5) > div > div > h4 > span");
+     //var title1 = document.querySelector("#app > section > main > div > div > div > div.p-lg > div > div > h4 > span");
+    var bodyy = document.querySelector("#app > section > main > div > div > div > div:nth-child(5) > div > div > div.email-container.m-t-lg > div.m-t-md.richtext-editor-wrapper.readOnly > div").querySelector('iframe');
+       // var body1 = document.querySelector("#app > section > main > div > div > div > div.p-lg > div > div > div.email-container.m-t-lg > div.m-t-md.richtext-editor-wrapper > div.editor-content-wrapper.p-l-md > iframe");
+        var titleBody = document.createElement("span");
+        titleBody.innerText = "Invalid Links Highlighted";
+        titleBody.style.marginLeft = "20px";
+       title.after(titleBody);
+       // title1.after(titleBody);
+      var anchr = bodyy.contentWindow.document.querySelectorAll('a');
+      // var anchr1 = body1.contentWindow.document.querySelectorAll('a');
+       console.log(anchr[7].href.substr(8,6));
+        console.log(anchr[7]);
+       for (let i=2;i<anchr.length - 11;i++){
+        if(anchr[i].href.substr(8,9) != "developer" && anchr[i].href.substr(8,6) != "forums"){
+        anchr[i].style.backgroundColor = "red";
+        anchr[i].target ="_blank";
+        }else{
+       anchr[i].style.backgroundColor = "yellow";
+        anchr[i].target ="_blank";
+        };
+        };
+       // for (let i=2;i<anchr1.length - 11;i++){
+         //   if(anchr1[i].href.substr(8,9) != "developer"){
+        //anchr1[i].style.backgroundColor = "red";
+         // anchr1[i].target ="_blank";
+           // }else{
+            //anchr1[i].style.backgroundColor = "yellow";
+         // anchr1[i].target ="_blank";
+           // };
+      //  };
+        //console.log(anchr);
+    },7000);
+})();

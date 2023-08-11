@@ -1,0 +1,238 @@
+// ==UserScript==
+// @name         [Optimus] Open Sample Dev Console with Values Consolidated
+// @namespace    http://tampermonkey.net/
+// @version      2.0
+// @author       @junnosm and @nayankjh
+// @match        https://optimus-prod.aka.amazon.com/skill*
+// @match        https://drive-render.corp.amazon.com/view/junnosm@/DevConsoleCopyUS/Alexa%20Developer%20Console.html
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
+// @grant        GM_xmlhttpRequest
+// @grant        GM_setValue
+// @grant        GM_getValue
+// ==/UserScript==
+
+(function() {
+    var $ = window.jQuery;
+    'use strict';
+
+    if(location.href == "https://drive-render.corp.amazon.com/view/junnosm@/DevConsoleCopyUS/Alexa%20Developer%20Console.html"){
+        mockClass();
+    }else{
+        optimusClass();
+    }
+
+    function optimusClass(){
+        const btnLink = document.createTextNode("Open Dev Console");
+        const btnNode = document.createElement("BUTTON");
+        btnNode.id = "Dev-link-button";
+        btnNode.className = "button";
+        btnNode.appendChild(btnLink);
+
+        setTimeout(function(){
+            const optimusHeaderIcon = $("div.ant-table-title > span")[0];
+            optimusHeaderIcon.after(btnNode);
+        },4000)
+
+        //Navigate to ANOC link
+        btnNode.addEventListener("click", async function() {
+            const skillId = getSkillId();
+            const version = getSkillVersion();
+            copsManifestClass(skillId, version)
+        });
+
+        //Set button styles
+        btnNode.style.background = "#EEEEEE";
+        btnNode.style.userSelect = "none";
+        btnNode.style.border = "solid 5px #CCCCCC";
+
+        async function copsManifestClass(skillId, version){
+
+            var APIURI = "http://alexaskillcontent-iad.iad.proxy.amazon.com/api/cops-manifests/certification/" +skillId+"?version="+version;
+            console.log(APIURI);
+
+            await GM_xmlhttpRequest({
+                method: "GET",
+                url: APIURI,
+                responseType: "json",
+                setTimeout: 6000,
+                onload: function(rspObj){
+                    var skillLocale = rspObj.response.skillManifest.skillManifestFeatures.publishingInformation.locales;
+                    var locale = ["en-US","en-CA","en-IN","en-GB","en-AU"];
+
+                    var metadata = selectLangValuesFromSKM(locale, skillLocale);
+                    var skillName = metadata[0].name;
+                    var description = metadata[0].description;
+                    var shortDescription = metadata[0].summary;
+                    var examplePhrase = metadata[0].examplePhrases;
+                    var updatedDescription = metadata[0].updatesDescription;
+
+                    var examplePhrase1 = examplePhrase[0]
+                    console.log(examplePhrase1);
+                    var examplePhrase2 = examplePhrase[1];
+                    console.log(examplePhrase2);
+                    var examplePhrase3 = examplePhrase[2];
+                    console.log(examplePhrase3);
+
+                    console.log(metadata[0].description);
+                    GM_setValue("skillName", skillName)
+                    GM_setValue("description",description);
+                    GM_setValue("shortDescription",shortDescription);
+                    GM_setValue("examplePhrase1", examplePhrase1);
+                    GM_setValue("examplePhrase2", examplePhrase2);
+                    GM_setValue("examplePhrase3", examplePhrase3);
+                    GM_setValue("updatedDescription", updatedDescription)
+                    window.open("https://drive-render.corp.amazon.com/view/junnosm@/DevConsoleCopyUS/Alexa%20Developer%20Console.html")
+
+                }
+            });
+        }
+
+        function getSkillId() {
+            let skillId =document.querySelector('.ant-typography.skillIdInfo').innerText.trim()
+            return skillId
+        }
+
+        function getSkillVersion(targetNode){
+            let version = document.querySelectorAll('div.ant-select-selection-selected-value')[0].innerText;;
+            version = beforeCut(version, " - ");
+            return version;
+        }
+
+        function beforeCut(str, cutStr) {
+            var index = str.indexOf(cutStr);
+            str = str.substring(0, index + 1);
+            return str;
+        }
+
+        function selectLangValuesFromSKM(locale, rspObjLocale){
+            var matched = [];
+            Object.keys(rspObjLocale).forEach(locale2 => {
+                for(var i=0;i<locale.length;i++){
+                if(locale2 == locale[i]){
+                    console.log("Locale Matches with " + locale[i]);
+                    matched.push(rspObjLocale[locale2])
+                }
+                   }
+            })
+            return matched;
+        }
+    }
+
+    function mockClass(){
+
+
+        var skillName = GM_getValue("skillName")
+        var description = GM_getValue("description");
+        var shortDescription = GM_getValue("shortDescription");
+        var examplePhrase1 = GM_getValue("examplePhrase1");
+        var examplePhrase2 = GM_getValue("examplePhrase2");
+        var examplePhrase3 = GM_getValue("examplePhrase3");
+        var updatedDescription = GM_getValue("updatedDescription");
+
+        console.log("Skill Name"+ skillName)
+        setTimeout(function(){
+            $("input[data-qa-hook = publishing-skill-info-kewords]")[0].value = skillName;
+            $("input[data-qa-hook = publishing-skill-info-kewords]")[1].value = shortDescription;
+            $("textarea[data-qa-hook = publishing-skill-info-kewords]")[0].value = description;
+
+            if (examplePhrase1 != "undefined"){
+                $("input.astro__input.flex-1")[0].value = examplePhrase1;
+            }else{
+                $("input.astro__input.flex-1")[0].value ="";
+            }
+            if (examplePhrase2 != "undefined"){
+                $("input.astro__input.flex-1")[1].value = examplePhrase2;
+            }else{
+                $("input.astro__input.flex-1")[1].value = ""
+            }
+            if (examplePhrase3 != "undefined"){
+                $("input.astro__input.flex-1")[2].value = examplePhrase3;
+            }else{
+                $("input.astro__input.flex-1")[2].value = ""
+            }
+            if (updatedDescription != "undefined"){
+                $("textarea[data-qa-hook = publishing-skill-info-updates-description]")[0].value = updatedDescription
+            }else{
+                $("textarea[data-qa-hook = publishing-skill-info-updates-description]")[0].value = ""
+            }
+
+            GM_setValue("skillName", "");
+            GM_setValue("description","");
+            GM_setValue("shortDescription","");
+            GM_setValue("examplePhrase1", "");
+            GM_setValue("examplePhrase2", "");
+            GM_setValue("examplePhrase3", "");
+            GM_setValue("updatedDescription", "")
+            
+    var head = document.querySelector(".astro-text-huge > span");
+    console.log(head);
+     var head1 = document.querySelector(".astro-text-light > span");
+    console.log(head1);
+    var parent = document.querySelector(".astro-expandable");
+    var mArr = ["English(CA)","English(UK)","English(IN)","English(AU)"]
+    for(var i=0;i<mArr.length;i++){
+    var localeChanger = document.createElement("li")
+      localeChanger.id = "Btn" + i;
+    localeChanger.style.padding = "10px";
+    localeChanger.innerHTML = mArr[i];
+    localeChanger.style.paddingLeft = "3.5rem"
+    localeChanger.style.backgroundColor = "#00b0e6"
+    localeChanger.style.marginTop = "10px";
+    localeChanger.style.color = "white";
+    localeChanger.style.cursor = "pointer";
+    parent.appendChild(localeChanger);
+
+    }
+    var btn4 = document.querySelector("a.nav-link.astro-text-truncate.is-selected");
+             btn4.href="#";
+    btn4.onclick = function(){
+    btn1.style.display = "none";
+        btn2.style.display = "none";
+        btn3.style.display = "none";
+        btn0.style.display = "none";
+        }
+
+var btn0 = document.querySelector("#Btn0");
+ var btn1 = document.querySelector("#Btn1");
+ var btn2 = document.querySelector("#Btn2");
+    var btn3 = document.querySelector("#Btn3");
+    btn0.onclick = function(){
+    head.innerText = "English (CA) Store Preview";
+        head1.innerText="Tell us how your skill should appear to English (CA) customers."
+        btn1.style.display = "none";
+        btn2.style.display = "none";
+        btn3.style.display = "none";
+        btn4.style.display = "none";
+
+    };
+    btn1.onclick = function(){
+    head.innerText = "English (UK) Store Preview";
+        head1.innerText="Tell us how your skill should appear to English (UK) customers."
+         btn0.style.display = "none";
+        btn2.style.display = "none";
+        btn3.style.display = "none";
+         btn4.style.display = "none";
+    }
+    btn2.onclick = function(){
+    head.innerText = "English (IN) Store Preview";
+        head1.innerText="Tell us how your skill should appear to English (IN) customers."
+         btn0.style.display = "none";
+        btn1.style.display = "none";
+        btn3.style.display = "none";
+         btn4.style.display = "none";
+    }
+    btn3.onclick = function(){
+    head.innerText = "English (AU) Store Preview";
+        head1.innerText="Tell us how your skill should appear to English (AU) customers."
+         btn0.style.display = "none";
+        btn1.style.display = "none";
+        btn2.style.display = "none";
+         btn4.style.display = "none";
+    }
+
+        },2000);
+
+    }
+
+})();
+

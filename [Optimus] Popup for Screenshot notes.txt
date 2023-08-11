@@ -1,0 +1,47 @@
+// ==UserScript==
+// @name         [Optimus] Popup for Skill notes
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       nayankjh@
+// @match        https://optimus-prod.aka.amazon.com/activityList/skill/*
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
+// @grant        GM_xmlhttpRequest
+// ==/UserScript==
+
+(function() {
+    'use strict';
+   var $ = window.jQuery;
+    setTimeout(function(){
+    let url = window.location.href.split('/');
+    //console.log(url);
+        let skillId = url[5];
+        let versionA = url[7];
+        let versionS = versionA.split('?');
+       let version = versionS[0];
+       // console.log(version);
+        //console.log(skillId);
+       let uri = "https://alexacertquantum-jlb-iad.iad.proxy.amazon.com/api/universalnotes/skill/"+skillId+"/version/"+version;
+       GM_xmlhttpRequest({
+                method: "GET",
+                url: uri,
+                onload: async function (response){
+                    let val =JSON.parse(response.responseText);
+                   let valArr = [];
+                    console.log(val);
+                     for (var i=0; i<val.length;i++){
+                         if(val[i].actionType == "ADD_MANUAL_RDA_BADGE"){
+                         valArr.push(val[i].body);
+                         }
+                         };
+                    console.log(valArr);
+                    if(valArr.length > 0){
+                    let child1 = $("<span>").css({"background-color" : "yellow","font-size" : "16px","margin-left" : "25px"}).html(valArr);
+                    let parent = $("#app > section > main > div > div.activityList.p-md.p-r-lg > div.skillInfo > div > div.ant-col.ant-col-22 > div:nth-child(1) > div.ant-col.ant-col-16 > div:nth-child(1) > span:nth-child(3)")
+                    parent.after(child1);
+                    //window.alert(valArr);
+                    }
+       }
+       });
+    },5000);
+})();

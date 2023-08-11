@@ -1,0 +1,54 @@
+// ==UserScript==
+// @name         Copy button for tester ID and skill name
+// @namespace    http://tampermonkey.net/
+// @version      0.1
+// @description  try to take over the world!
+// @author       @nayankjh
+// @match        https://optimus-prod.aka.amazon.com/activityDetail/certMngr/*
+// @require      http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js
+// @grant        GM_xmlhttpRequest
+// @grant        GM_setValue
+// @grant        GM_getValue
+// ==/UserScript==
+
+(function() {
+    var $ = window.jQuery;
+    'use strict';
+setTimeout(function(){
+           var skill = document.querySelector("#app > section > main > div > div > div > div.skillInfo > div > div.ant-row > div > div:nth-child(1) > div.ant-col.ant-col-16 > div > span.skillInfo-header.optimus-text-huge.optimus-text-light");
+           var skillId = skill.innerText;
+           var copyBtn = document.createElement("button");
+                copyBtn.id = "copy-button"
+            copyBtn.innerText = "Copy";
+            copyBtn.style.fontSize = "14px";
+            copyBtn.style.borderRadius = "6px";
+            skill.after(copyBtn);
+            copyBtn.onclick = function(){
+                 var temp = document.createElement("textarea");
+                document.body.appendChild(temp);
+                    temp.value = skillId;
+                    temp.select();
+                    document.execCommand('copy');
+                    temp.remove();
+                 copyBtn.innerText="Copied";
+                };
+               var tester = document.querySelector("#app > section > main > div > div > div > div.p-lg > div:nth-child(3) > div.ant-col.ant-col-21");
+                 var testerId = tester.innerText;
+                  console.log(testerId);
+                  var copyBtn1 = document.createElement("button");
+                copyBtn1.id = "copy-button2"
+            copyBtn1.innerText = "Copy";
+             copyBtn1.style.fontSize = "14px";
+             copyBtn1.style.borderRadius = "6px";
+            tester.after(copyBtn1);
+              copyBtn1.onclick = function(){
+                 var temp1 = document.createElement("textarea");
+                document.body.appendChild(temp1);
+                    temp1.value = testerId;
+                    temp1.select();
+                    document.execCommand('copy');
+                    temp1.remove();
+                 copyBtn1.innerText="Copied";
+                };
+        },6000)
+})();
